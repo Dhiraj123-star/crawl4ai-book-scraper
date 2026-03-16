@@ -4,6 +4,7 @@ from pathlib import Path
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+from rag.rag_pipeline import rag_answer
 
 load_dotenv()
 
@@ -68,6 +69,17 @@ User question:
     )
     answer= response.choices[0].message.content
 
+    return {
+        "question":question,
+        "answer":answer
+    }
+
+# -------------------------
+# RAG Question Answering
+# -------------------------
+@app.get("/ask-rag")
+def ask_rag(question:str):
+    answer= rag_answer(question)
     return {
         "question":question,
         "answer":answer
