@@ -3,9 +3,9 @@
 A simple **AI-powered web scraping and data service project** that extracts structured data from websites using **Crawl4AI** and **OpenAI LLMs**, and exposes the extracted data through a **FastAPI REST API**.
 
 The scraper crawls a webpage, sends cleaned content to an LLM, extracts structured book data, and stores it as JSON.
-The API layer then allows users to query the dataset or ask AI questions about it.
+The API layer then allows users to query the dataset, perform semantic search, or ask AI questions using a **RAG (Retrieval-Augmented Generation) pipeline**.
 
-This project demonstrates how to combine **modern AI tools, web scraping, and backend APIs** to build an intelligent data pipeline.
+This project demonstrates how to combine **modern AI tools, web scraping, backend APIs, and semantic search** to build an intelligent data pipeline.
 
 ---
 
@@ -19,13 +19,15 @@ This project demonstrates how to combine **modern AI tools, web scraping, and ba
 * 📄 Saves extracted data as **clean JSON dataset**
 * ⚡ **REST API service** using FastAPI
 * 🔎 **Search books by title**
-* 🧠 **AI-powered Q&A endpoint** over the dataset
+* 🧠 **AI-powered Q&A endpoint** over full dataset
+* 🔍 **RAG-based semantic search** using embeddings
+* ⚖️ **Hybrid filtering** for structured queries (price conditions like `<`, `>`, `<=`, `>=`, `==`)
 
 ---
 
 ## 🧠 Architecture
 
-```
+```id="qos6q7"
 Website
    ↓
 Crawl4AI (Fetch + Clean HTML)
@@ -40,16 +42,20 @@ Pydantic Validation
    ↓
 books.json dataset
    ↓
-FastAPI Service
+Embeddings (Vector Store)
    ↓
-REST API + AI Question Answering
+Vector Search + Hybrid Filtering
+   ↓
+LLM Answer (RAG)
+   ↓
+FastAPI Service
 ```
 
 ---
 
 ## 📂 Project Structure
 
-```
+```id="8r1uyk"
 crawl4ai-book-scraper
 │
 ├── .env
@@ -60,9 +66,13 @@ crawl4ai-book-scraper
 ├── data/
 │   └── books.json
 │
-└── scraper/
-    ├── crawler.py
-    └── schema.py
+├── scraper/
+│   ├── crawler.py
+│   └── schema.py
+│
+└── rag/
+    ├── vector_store.py
+    └── rag_pipeline.py
 ```
 
 ---
@@ -71,7 +81,7 @@ crawl4ai-book-scraper
 
 Clone the repository and create a virtual environment.
 
-```bash
+```bash id="5r1z8l"
 git clone <repo-url>
 cd crawl4ai-book-scraper
 
@@ -81,7 +91,7 @@ source venv/bin/activate
 
 Install dependencies:
 
-```bash
+```bash id="7th5ye"
 pip install -r requirements.txt
 playwright install chromium
 ```
@@ -92,7 +102,7 @@ playwright install chromium
 
 Create a `.env` file:
 
-```
+```id="q8u8rf"
 OPENAI_API_KEY=your_openai_api_key
 ```
 
@@ -102,13 +112,13 @@ OPENAI_API_KEY=your_openai_api_key
 
 Generate the dataset:
 
-```bash
+```bash id="eh4x9u"
 python main.py
 ```
 
 This will create:
 
-```
+```id="a0mp8x"
 data/books.json
 ```
 
@@ -118,19 +128,19 @@ data/books.json
 
 Start the FastAPI server:
 
-```bash
+```bash id="d4v1sb"
 uvicorn api:app --reload
 ```
 
 Server will start at:
 
-```
+```id="6ttg61"
 http://127.0.0.1:8000
 ```
 
 Interactive API docs:
 
-```
+```id="8t2m6q"
 http://127.0.0.1:8000/docs
 ```
 
@@ -140,7 +150,7 @@ http://127.0.0.1:8000/docs
 
 ### Get all books
 
-```
+```id="zq5qql"
 GET /books
 ```
 
@@ -150,7 +160,7 @@ Returns the full dataset.
 
 ### Get book by title
 
-```
+```id="kj9h8z"
 GET /books?title=Sapiens
 ```
 
@@ -158,22 +168,27 @@ Returns the matching book.
 
 ---
 
-### Ask AI about books
+### Ask AI (Full Dataset)
 
-```
+```id="qis8i7"
 GET /ask?question=Which books cost more than £50?
 ```
 
-The AI reads the dataset and answers the question.
+Uses the **entire dataset** for answering.
 
-Example response:
+---
 
-```json
-{
-  "question": "Which books cost more than £50?",
-  "answer": "The following books cost more than £50: A Light in the Attic (£51.77), Sapiens: A Brief History of Humankind (£54.23)."
-}
+### Ask AI (RAG - Semantic Search)
+
+```id="u2pxm6"
+GET /ask-rag?question=Which books cost less than £50?
 ```
+
+Uses:
+
+* embeddings
+* vector similarity search
+* hybrid filtering (for price queries)
 
 ---
 
@@ -181,7 +196,7 @@ Example response:
 
 `data/books.json`
 
-```json
+```json id="m6m2c7"
 {
   "books": [
     {"title": "A Light in the Attic", "price": "£51.77"},
@@ -198,13 +213,14 @@ Example response:
 * Automated dataset generation
 * LLM-assisted web data extraction
 * Backend AI data services
-* Building datasets for **RAG or AI search systems**
+* Semantic search systems
+* Building datasets for **RAG / AI search engines**
 
 ---
 
 ## 📌 Notes
 
-* Designed for **learning AI-based scraping pipelines**
+* Designed for **learning AI-based scraping + RAG pipelines**
 * Uses a practice website:
 
 https://books.toscrape.com
