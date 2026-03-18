@@ -21,13 +21,14 @@ This project demonstrates how to combine **modern AI tools, web scraping, backen
 * 🔎 **Search books by title**
 * 🧠 **AI-powered Q&A endpoint** over full dataset
 * 🔍 **RAG-based semantic search** using embeddings
-* ⚖️ **Hybrid filtering** for structured queries (price conditions like `<`, `>`, `<=`, `>=`, `==`)
+* ⚖️ **Hybrid filtering** for structured queries (`<`, `>`, `<=`, `>=`, `==`)
+* 🐳 **Dockerized deployment** for easy setup
 
 ---
 
 ## 🧠 Architecture
 
-```id="qos6q7"
+```
 Website
    ↓
 Crawl4AI (Fetch + Clean HTML)
@@ -55,13 +56,15 @@ FastAPI Service
 
 ## 📂 Project Structure
 
-```id="8r1uyk"
+```
 crawl4ai-book-scraper
 │
 ├── .env
 ├── main.py
 ├── api.py
 ├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
 │
 ├── data/
 │   └── books.json
@@ -77,11 +80,9 @@ crawl4ai-book-scraper
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation (Local Setup)
 
-Clone the repository and create a virtual environment.
-
-```bash id="5r1z8l"
+```bash
 git clone <repo-url>
 cd crawl4ai-book-scraper
 
@@ -91,7 +92,7 @@ source venv/bin/activate
 
 Install dependencies:
 
-```bash id="7th5ye"
+```bash
 pip install -r requirements.txt
 playwright install chromium
 ```
@@ -102,7 +103,7 @@ playwright install chromium
 
 Create a `.env` file:
 
-```id="q8u8rf"
+```
 OPENAI_API_KEY=your_openai_api_key
 ```
 
@@ -112,36 +113,51 @@ OPENAI_API_KEY=your_openai_api_key
 
 Generate the dataset:
 
-```bash id="eh4x9u"
+```bash
 python main.py
 ```
 
 This will create:
 
-```id="a0mp8x"
+```
 data/books.json
 ```
 
 ---
 
-## ▶️ Run the API
+## ▶️ Run the API (Local)
 
-Start the FastAPI server:
-
-```bash id="d4v1sb"
+```bash
 uvicorn api:app --reload
 ```
 
-Server will start at:
+Server:
 
-```id="6ttg61"
+```
 http://127.0.0.1:8000
 ```
 
-Interactive API docs:
+Docs:
 
-```id="8t2m6q"
+```
 http://127.0.0.1:8000/docs
+```
+
+---
+
+## 🐳 Run with Docker
+
+### Build & Start
+
+```bash
+docker compose up --build
+```
+
+### Access API
+
+```
+http://localhost:8000
+http://localhost:8000/docs
 ```
 
 ---
@@ -150,45 +166,39 @@ http://127.0.0.1:8000/docs
 
 ### Get all books
 
-```id="zq5qql"
+```
 GET /books
 ```
-
-Returns the full dataset.
 
 ---
 
 ### Get book by title
 
-```id="kj9h8z"
+```
 GET /books?title=Sapiens
 ```
-
-Returns the matching book.
 
 ---
 
 ### Ask AI (Full Dataset)
 
-```id="qis8i7"
+```
 GET /ask?question=Which books cost more than £50?
 ```
-
-Uses the **entire dataset** for answering.
 
 ---
 
 ### Ask AI (RAG - Semantic Search)
 
-```id="u2pxm6"
+```
 GET /ask-rag?question=Which books cost less than £50?
 ```
 
 Uses:
 
 * embeddings
-* vector similarity search
-* hybrid filtering (for price queries)
+* vector search
+* hybrid filtering
 
 ---
 
@@ -196,7 +206,7 @@ Uses:
 
 `data/books.json`
 
-```json id="m6m2c7"
+```json
 {
   "books": [
     {"title": "A Light in the Attic", "price": "£51.77"},
@@ -212,20 +222,17 @@ Uses:
 * AI-powered web scraping
 * Automated dataset generation
 * LLM-assisted web data extraction
-* Backend AI data services
+* Backend AI services
 * Semantic search systems
-* Building datasets for **RAG / AI search engines**
+* Building datasets for **RAG / AI applications**
 
 ---
 
 ## 📌 Notes
 
-* Designed for **learning AI-based scraping + RAG pipelines**
-* Uses a practice website:
-
-https://books.toscrape.com
-
-* Avoid scraping websites that prohibit automated access.
+* Designed for **learning AI + RAG pipelines**
+* Uses practice website: https://books.toscrape.com
+* Avoid scraping restricted websites
 
 ---
 
