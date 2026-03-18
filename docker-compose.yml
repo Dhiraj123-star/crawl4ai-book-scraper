@@ -1,0 +1,11 @@
+services:
+  fastapi-app:
+    container_name: book-ai-api
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    restart: always
