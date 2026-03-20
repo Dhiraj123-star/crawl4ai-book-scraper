@@ -23,6 +23,8 @@ This project demonstrates how to combine **modern AI tools, web scraping, backen
 * 🔍 **RAG-based semantic search** using embeddings
 * ⚖️ **Hybrid filtering** for structured queries (`<`, `>`, `<=`, `>=`, `==`)
 * 🐳 **Dockerized deployment** for easy setup
+* ❤️ **Health check endpoint** for monitoring
+* 🛡️ **Docker healthcheck support** for container reliability
 
 ---
 
@@ -158,6 +160,25 @@ docker compose up --build
 ```
 http://localhost:8000
 http://localhost:8000/docs
+```
+
+---
+
+## ❤️ Health Check
+
+### Endpoint
+
+```
+GET /health
+```
+
+Response:
+
+```json
+{
+  "status": "healthy",
+  "service": "book-ai-api"
+}
 ```
 
 ---
