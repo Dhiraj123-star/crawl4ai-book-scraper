@@ -5,7 +5,7 @@ A simple **AI-powered web scraping and data service project** that extracts stru
 The scraper crawls a webpage, sends cleaned content to an LLM, extracts structured book data, and stores it as JSON.
 The API layer then allows users to query the dataset, perform semantic search, or ask AI questions using a **RAG (Retrieval-Augmented Generation) pipeline**.
 
-This project demonstrates how to combine **modern AI tools, web scraping, backend APIs, and semantic search** to build an intelligent data pipeline.
+This project demonstrates how to combine **modern AI tools, web scraping, backend APIs, semantic search, and CI/CD pipelines** to build an intelligent data pipeline.
 
 ---
 
@@ -24,13 +24,15 @@ This project demonstrates how to combine **modern AI tools, web scraping, backen
 * ⚖️ **Hybrid filtering** for structured queries (`<`, `>`, `<=`, `>=`, `==`)
 * 🐳 **Dockerized deployment** for easy setup
 * ❤️ **Health check endpoint** for monitoring
-* 🛡️ **Docker healthcheck support** for container reliability
+* 🛡️ **Docker healthcheck support**
+* 🔄 **CI/CD pipeline** using GitHub Actions
+* 📦 **Automatic Docker image build & push to DockerHub**
 
 ---
 
 ## 🧠 Architecture
 
-```
+```id="y9b2kq"
 Website
    ↓
 Crawl4AI (Fetch + Clean HTML)
@@ -52,13 +54,17 @@ Vector Search + Hybrid Filtering
 LLM Answer (RAG)
    ↓
 FastAPI Service
+   ↓
+Docker Container
+   ↓
+CI/CD (GitHub Actions → DockerHub)
 ```
 
 ---
 
 ## 📂 Project Structure
 
-```
+```id="2w2m6v"
 crawl4ai-book-scraper
 │
 ├── .env
@@ -75,16 +81,20 @@ crawl4ai-book-scraper
 │   ├── crawler.py
 │   └── schema.py
 │
-└── rag/
-    ├── vector_store.py
-    └── rag_pipeline.py
+├── rag/
+│   ├── vector_store.py
+│   └── rag_pipeline.py
+│
+└── .github/
+    └── workflows/
+        └── docker.yml
 ```
 
 ---
 
 ## ⚙️ Installation (Local Setup)
 
-```bash
+```bash id="3ujg1n"
 git clone <repo-url>
 cd crawl4ai-book-scraper
 
@@ -94,7 +104,7 @@ source venv/bin/activate
 
 Install dependencies:
 
-```bash
+```bash id="u5ahb2"
 pip install -r requirements.txt
 playwright install chromium
 ```
@@ -105,7 +115,7 @@ playwright install chromium
 
 Create a `.env` file:
 
-```
+```id="l2u6kz"
 OPENAI_API_KEY=your_openai_api_key
 ```
 
@@ -113,15 +123,13 @@ OPENAI_API_KEY=your_openai_api_key
 
 ## ▶️ Run the Scraper
 
-Generate the dataset:
-
-```bash
+```bash id="m1p6h0"
 python main.py
 ```
 
-This will create:
+Generates:
 
-```
+```id="d7ml3n"
 data/books.json
 ```
 
@@ -129,52 +137,35 @@ data/books.json
 
 ## ▶️ Run the API (Local)
 
-```bash
+```bash id="dgrz5m"
 uvicorn api:app --reload
 ```
 
-Server:
-
-```
-http://127.0.0.1:8000
-```
-
-Docs:
-
-```
-http://127.0.0.1:8000/docs
-```
+* API: http://127.0.0.1:8000
+* Docs: http://127.0.0.1:8000/docs
 
 ---
 
 ## 🐳 Run with Docker
 
-### Build & Start
-
-```bash
+```bash id="kq1d7f"
 docker compose up --build
 ```
 
-### Access API
-
-```
-http://localhost:8000
-http://localhost:8000/docs
-```
+* API: http://localhost:8000
+* Docs: http://localhost:8000/docs
 
 ---
 
 ## ❤️ Health Check
 
-### Endpoint
-
-```
+```id="p7w8hf"
 GET /health
 ```
 
 Response:
 
-```json
+```json id="2nqlhx"
 {
   "status": "healthy",
   "service": "book-ai-api"
@@ -187,53 +178,67 @@ Response:
 
 ### Get all books
 
-```
+```id="3cbizb"
 GET /books
 ```
 
----
-
 ### Get book by title
 
-```
+```id="i0q3v7"
 GET /books?title=Sapiens
 ```
 
----
-
 ### Ask AI (Full Dataset)
 
-```
+```id="s7u6r8"
 GET /ask?question=Which books cost more than £50?
 ```
 
----
+### Ask AI (RAG)
 
-### Ask AI (RAG - Semantic Search)
-
-```
+```id="b6r5o2"
 GET /ask-rag?question=Which books cost less than £50?
 ```
 
-Uses:
+---
 
-* embeddings
-* vector search
-* hybrid filtering
+## 🔄 CI/CD Pipeline
+
+This project uses **GitHub Actions** to automate Docker builds and deployment.
+
+### Workflow:
+
+```id="m2n4y9"
+Push to main branch
+        ↓
+GitHub Actions triggered
+        ↓
+Docker image build
+        ↓
+Push to DockerHub (dhiraj918106/book-ai-api)
+```
+
+### Workflow File
+
+```id="x9t6pq"
+.github/workflows/docker.yml
+```
+
+### Required GitHub Secrets
+
+```id="z8k1vn"
+DOCKERHUB_USERNAME=dhiraj918106
+DOCKERHUB_TOKEN=your_dockerhub_access_token
+```
 
 ---
 
-## 📄 Example Output
+## 📦 Docker Image
 
-`data/books.json`
+Available at:
 
-```json
-{
-  "books": [
-    {"title": "A Light in the Attic", "price": "£51.77"},
-    {"title": "Tipping the Velvet", "price": "£53.74"}
-  ]
-}
+```id="v4y8os"
+https://hub.docker.com/r/dhiraj918106/book-ai-api
 ```
 
 ---
@@ -242,18 +247,16 @@ Uses:
 
 * AI-powered web scraping
 * Automated dataset generation
-* LLM-assisted web data extraction
 * Backend AI services
 * Semantic search systems
-* Building datasets for **RAG / AI applications**
+* RAG-based applications
 
 ---
 
 ## 📌 Notes
 
-* Designed for **learning AI + RAG pipelines**
 * Uses practice website: https://books.toscrape.com
-* Avoid scraping restricted websites
+* Designed for learning **AI + RAG + DevOps pipelines**
 
 ---
 
