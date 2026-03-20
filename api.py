@@ -26,6 +26,13 @@ def load_books():
 @app.get("/")
 def root():
     return {"message":"Book Scrapper API is running"}
+
+@app.get("/health")
+def health_check():
+    return {
+        "status":"healthy",
+        "service":"book-ai-api"
+    }
 # ------------------
 # GET all books
 # ------------------
